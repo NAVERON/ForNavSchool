@@ -6,6 +6,8 @@
 package Interface;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -25,15 +27,21 @@ public class LogToWeb extends  Application{
     public void start(Stage primaryStage) throws Exception {
         Scene scene = new Scene(createContent());
         
-        primaryStage.setTitle(LogToWeb.PROJECT_NAME);
         primaryStage.setScene(scene);
+        primaryStage.setTitle(LogToWeb.PROJECT_NAME);
         primaryStage.show();
     }
 
-    private Parent createContent() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("./Login.fxml"));
-        Parent root = loader.load();
-        
+    private Parent createContent() {
+
+        Parent root = null;
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("./Login.fxml"));
+            root = loader.load();
+        } catch (IOException ex) {
+            Logger.getLogger(LogToWeb.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return root;
     }
     
