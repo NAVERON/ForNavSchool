@@ -27,19 +27,34 @@
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
                <children>
+                  <Label text="From">
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin>
+                  </Label>
                   <DatePicker>
                      <HBox.margin>
-                        <Insets left="50.0" />
+                        <Insets left="20.0" />
                      </HBox.margin>
                   </DatePicker>
+                  <Label text="To">
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin>
+                  </Label>
                   <DatePicker>
                      <HBox.margin>
-                        <Insets left="50.0" />
+                        <Insets left="20.0" />
                      </HBox.margin>
                   </DatePicker>
+                  <Label text="Keywords">
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin>
+                  </Label>
                   <TextField>
                      <HBox.margin>
-                        <Insets left="50.0" />
+                        <Insets left="20.0" />
                      </HBox.margin>
                   </TextField>
                </children></HBox>
@@ -47,12 +62,12 @@
                <children>
                   <Button fx:id="search_btn" mnemonicParsing="false" text="Search">
                      <HBox.margin>
-                        <Insets left="50.0" />
+                        <Insets left="20.0" />
                      </HBox.margin>
                   </Button>
                   <ProgressBar fx:id="search_progress" prefWidth="200.0" progress="0.0">
                      <HBox.margin>
-                        <Insets left="50.0" />
+                        <Insets left="20.0" />
                      </HBox.margin>
                   </ProgressBar>
                </children></HBox>

@@ -3,12 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Interface;
+package demos;
 
 /**
  *
  * @author ERON
  */
-public enum SEARCH_TYPE {
+public class LoginDemo {
     
+    public static void main(String[] args){
+        System.out.println("hello world");
+    }
 }
