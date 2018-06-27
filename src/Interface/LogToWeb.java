@@ -23,7 +23,7 @@ import javafx.stage.Stage;
 public class LogToWeb extends Application {
 
     public static String PROJECT_NAME = "武汉理工大学航运学院信息搜索平台";
-
+    
     @Override
     public void start(Stage primaryStage) throws Exception {
         

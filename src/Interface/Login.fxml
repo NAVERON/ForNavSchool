@@ -12,7 +12,7 @@
       <HBox prefHeight="100.0" prefWidth="200.0" />
       <HBox prefHeight="100.0" prefWidth="200.0">
          <children>
-            <Button fx:id="login" mnemonicParsing="false" onAction="#changeToScene" text="Login" />
+            <Button fx:id="login" mnemonicParsing="false" onAction="#changeToSearch" text="Login" />
          </children></HBox>
    </children>
 </VBox>

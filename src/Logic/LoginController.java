@@ -23,17 +23,17 @@ public class LoginController {
     @FXML
     Button login;
     
-    Stage primaryStage = null;
-
+    
+    private Stage primaryStage = null;
     public LoginController(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
     @FXML
-    public void changeToScene() {
+    public void changeToSearch() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../Interface/Search.fxml"));
-            SearchController searchcontroller = new SearchController();
+            SearchController searchcontroller = new SearchController(this.primaryStage);
             loader.setController(searchcontroller);
             
             this.primaryStage.setScene(new Scene( loader.load() ));
