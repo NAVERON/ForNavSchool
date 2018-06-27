@@ -1,18 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <HBox prefHeight="100.0" prefWidth="200.0" />
-      <HBox prefHeight="100.0" prefWidth="200.0" />
-      <HBox prefHeight="100.0" prefWidth="200.0">
+      <HBox alignment="CENTER" prefHeight="50.0">
          <children>
-            <Button fx:id="login" mnemonicParsing="false" onAction="#changeToSearch" text="Login" />
+            <Label text="学号">
+               <HBox.margin>
+                  <Insets left="50.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <TextField fx:id="student_id_textfield">
+               <HBox.margin>
+                  <Insets left="20.0" right="50.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin></HBox>
+      <HBox alignment="CENTER" prefHeight="50.0">
+         <children>
+            <Label text="密码">
+               <HBox.margin>
+                  <Insets left="50.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <PasswordField fx:id="student_pw_textfield">
+               <HBox.margin>
+                  <Insets left="20.0" right="50.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </PasswordField>
+         </children></HBox>
+      <HBox alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="200.0">
+         <children>
+            <Hyperlink fx:id="log_visitor" onAction="#changeToSearch" text="JustVisitor">
+               <HBox.margin>
+                  <Insets left="50.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Hyperlink>
+            <Button fx:id="log_honor" mnemonicParsing="false" onAction="#changeToSearch" text="Honor">
+               <HBox.margin>
+                  <Insets left="50.0" right="50.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="16.0" />
+               </font></Button>
          </children></HBox>
    </children>
 </VBox>
