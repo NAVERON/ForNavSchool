@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Logic;
+package Interface;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -17,5 +17,5 @@ public class SearchController {
     public SearchController(Stage primaryStage){
         this.primaryStage = primaryStage;
     }
-
+    
 }

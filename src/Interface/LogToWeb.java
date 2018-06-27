@@ -5,7 +5,6 @@
  */
 package Interface;
 
-import Logic.SearchController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
