@@ -9,16 +9,16 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Interface.SearchController">
    <center>
       <SplitPane dividerPositions="0.1813627254509018" BorderPane.alignment="CENTER">
         <items>
             <ScrollPane prefViewportHeight="508.0" prefViewportWidth="178.0">
                <content>
-                  <VBox />
+                  <VBox fx:id="titles_boxs" />
                </content>
             </ScrollPane>
-            <WebView prefHeight="200.0" prefWidth="200.0" />
+            <WebView fx:id="content_webview" prefHeight="200.0" prefWidth="200.0" />
         </items>
       </SplitPane>
    </center>
@@ -32,7 +32,7 @@
                         <Insets left="20.0" />
                      </HBox.margin>
                   </Label>
-                  <DatePicker>
+                  <DatePicker fx:id="from_date">
                      <HBox.margin>
                         <Insets left="20.0" />
                      </HBox.margin>
@@ -42,7 +42,7 @@
                         <Insets left="20.0" />
                      </HBox.margin>
                   </Label>
-                  <DatePicker>
+                  <DatePicker fx:id="to_date">
                      <HBox.margin>
                         <Insets left="20.0" />
                      </HBox.margin>
@@ -52,7 +52,7 @@
                         <Insets left="20.0" />
                      </HBox.margin>
                   </Label>
-                  <TextField>
+                  <TextField fx:id="keywords_textfield">
                      <HBox.margin>
                         <Insets left="20.0" />
                      </HBox.margin>
@@ -60,7 +60,7 @@
                </children></HBox>
             <HBox fx:id="mannual_hbox" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Button fx:id="search_btn" mnemonicParsing="false" text="Search">
+                  <Button fx:id="search_btn" mnemonicParsing="false" onAction="#search" text="Search">
                      <HBox.margin>
                         <Insets left="20.0" />
                      </HBox.margin>
