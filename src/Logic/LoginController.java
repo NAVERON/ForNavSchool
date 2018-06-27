@@ -56,6 +56,7 @@ public class LoginController {
 
         Stage webAccess = new Stage();
         Scene scene = new Scene(webview);
+        webAccess.setScene(scene);
         webAccess.show();
     }
 }

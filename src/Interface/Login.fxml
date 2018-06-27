@@ -53,9 +53,9 @@
          </children></HBox>
       <HBox alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="200.0">
          <children>
-            <Hyperlink fx:id="log_visitor" onAction="#changeToSearch" text="JustVisitor">
+            <Hyperlink fx:id="log_visitor" onAction="#changeToBrowser" text="JustVisitor">
                <HBox.margin>
-                  <Insets left="50.0" />
+                  <Insets left="20.0" />
                </HBox.margin>
                <font>
                   <Font size="16.0" />
@@ -63,7 +63,7 @@
             </Hyperlink>
             <Button fx:id="log_honor" mnemonicParsing="false" onAction="#changeToSearch" text="Honor">
                <HBox.margin>
-                  <Insets left="50.0" right="50.0" />
+                  <Insets left="20.0" right="20.0" />
                </HBox.margin>
                <font>
                   <Font size="16.0" />
