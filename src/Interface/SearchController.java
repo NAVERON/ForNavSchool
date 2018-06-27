@@ -18,17 +18,11 @@ public class SearchController {
     private Stage primaryStage = null;
 
     @FXML
-    private ComboBox<String> type_combobox;
-    @FXML
     private Button search_btn;
     @FXML
     private ProgressBar search_progress;
     @FXML
     private HBox mannual_hbox;
-    @FXML
-    private ScrollPane content;
-    @FXML
-    private ScrollPane tittles;
 
     public SearchController(Stage primaryStage) {
         this.primaryStage = primaryStage;

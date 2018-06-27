@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.web.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.image.*?>
 <?import java.lang.*?>
@@ -8,12 +9,16 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Interface.SearchController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <SplitPane dividerPositions="0.5" BorderPane.alignment="CENTER">
+      <SplitPane dividerPositions="0.1813627254509018" BorderPane.alignment="CENTER">
         <items>
-            <ScrollPane fx:id="tittles" />
-            <ScrollPane fx:id="content" />
+            <ScrollPane prefViewportHeight="508.0" prefViewportWidth="178.0">
+               <content>
+                  <VBox />
+               </content>
+            </ScrollPane>
+            <WebView prefHeight="200.0" prefWidth="200.0" />
         </items>
       </SplitPane>
    </center>
@@ -22,11 +27,24 @@
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <ComboBox fx:id="type_combobox" prefWidth="150.0">
+                  <DatePicker>
                      <HBox.margin>
                         <Insets left="50.0" />
                      </HBox.margin>
-                  </ComboBox>
+                  </DatePicker>
+                  <DatePicker>
+                     <HBox.margin>
+                        <Insets left="50.0" />
+                     </HBox.margin>
+                  </DatePicker>
+                  <TextField>
+                     <HBox.margin>
+                        <Insets left="50.0" />
+                     </HBox.margin>
+                  </TextField>
+               </children></HBox>
+            <HBox fx:id="mannual_hbox" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+               <children>
                   <Button fx:id="search_btn" mnemonicParsing="false" text="Search">
                      <HBox.margin>
                         <Insets left="50.0" />
@@ -38,7 +56,6 @@
                      </HBox.margin>
                   </ProgressBar>
                </children></HBox>
-            <HBox fx:id="mannual_hbox" prefHeight="100.0" prefWidth="200.0" />
          </children>
       </VBox>
    </top>

@@ -17,13 +17,14 @@ import javafx.stage.Stage;
 public class LogToWeb extends Application {
 
     public static String PROJECT_NAME = "武汉理工大学航运学院信息搜索平台";
+
     @Override
     public void start(Stage primaryStage) throws Exception {
-        
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("./Search.fxml"));
-        SearchController logincontroller = new SearchController(primaryStage);
-        loader.setController(logincontroller);
-        
+        SearchController searchcontroller = new SearchController(primaryStage);
+        loader.setController(searchcontroller);
+
         Scene scene = new Scene(loader.load());
         primaryStage.setScene(scene);
         primaryStage.setTitle(LogToWeb.PROJECT_NAME);
