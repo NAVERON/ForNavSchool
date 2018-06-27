@@ -7,15 +7,31 @@ package Interface;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public class SearchController {
-    @FXML
-    Button logout;
-    
+
     private Stage primaryStage = null;
-    public SearchController(Stage primaryStage){
+
+    @FXML
+    private ComboBox<String> type_combobox;
+    @FXML
+    private Button search_btn;
+    @FXML
+    private ProgressBar search_progress;
+    @FXML
+    private HBox mannual_hbox;
+    @FXML
+    private ScrollPane content;
+    @FXML
+    private ScrollPane tittles;
+
+    public SearchController(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
-    
+
 }
