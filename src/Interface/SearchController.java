@@ -44,6 +44,6 @@ public class SearchController {
     }
     
     public void search(){
-        
+        titles_boxs.getChildren().add(new TitleHBox(content_webview));
     }
 }
