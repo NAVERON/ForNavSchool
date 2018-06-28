@@ -8,6 +8,7 @@ package Interface;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
@@ -41,24 +42,35 @@ public class SearchController {
     private VBox links_boxes;   //左边添加链接
     @FXML
     private WebView content_webview;  //右边显示的超链接网页界面
-    
+
     public SearchController(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.lists = new LinkedList<ResultHBox>();
     }
-    
-    
-    public void search(){
+
+    public void search() {
         //爬取信息的进程
+        String page;
+
         Notice notice = new Notice("", "", new Date(), "");
         ResultHBox titlehbox = new ResultHBox(content_webview, notice);
         lists.add(titlehbox);
-        
+
         addTitles(lists);
     }
-    
-    public void addTitles(List<ResultHBox> lists){
-        for(ResultHBox titlehbox : lists){
+
+    class GetPageContent extends Task<ResultHBox>{
+
+        @Override
+        protected ResultHBox call() throws Exception {
+            System.out.println("Interface.SearchController.GetPageContent.call()");
+            return new ResultHBox(content_webview, new Notice(keywords, keywords, to, keywords));
+        }
+        
+    }
+
+    public void addTitles(List<ResultHBox> lists) {
+        for (ResultHBox titlehbox : lists) {
             links_boxes.getChildren().add(titlehbox);
         }
     }
