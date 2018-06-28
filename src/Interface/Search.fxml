@@ -15,7 +15,7 @@
         <items>
             <ScrollPane prefViewportHeight="508.0" prefViewportWidth="178.0">
                <content>
-                  <VBox fx:id="titles_boxs" />
+                  <VBox fx:id="titles_boxes" />
                </content>
             </ScrollPane>
             <WebView fx:id="content_webview" prefHeight="200.0" prefWidth="200.0" />

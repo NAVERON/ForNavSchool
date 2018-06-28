@@ -40,14 +40,19 @@ public class SearchController {
     private VBox titles_boxes;   //左边添加链接
     @FXML
     private WebView content_webview;  //右边显示的超链接网页界面
-
+    
     public SearchController(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
     
-    List<TitleHBox> list = new LinkedList<>();
+    List<TitleHBox> lists = new LinkedList<TitleHBox>();
     public void search(){
         //爬取信息的进程
+        Notice notice = new Notice("", "", new Date(), "");
+        TitleHBox titlehbox = new TitleHBox(content_webview, notice);
+        lists.add(titlehbox);
+        
+        addTitles(lists);
     }
     
     public void addTitles(List<TitleHBox> lists){

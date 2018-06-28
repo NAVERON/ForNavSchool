@@ -22,6 +22,9 @@ public class Notice {
         this.title = title;
         this.content = content;
         this.date = date;
-        this.superlink = superlink;
+        if( !superlink.equals("") ){
+            this.superlink = superlink;
+        }
+        
     }
 }

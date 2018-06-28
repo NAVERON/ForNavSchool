@@ -17,20 +17,23 @@ import javafx.scene.web.WebView;
  */
 public class TitleHBox extends HBox{
     
-    private Label name = null;
-    private Hyperlink title = new Hyperlink("http://www.baidu.com");
-    private Label state = null;
+    private Label name = new Label();
+    private Hyperlink title = new Hyperlink();
+    private Label state = new Label();
     
+    private WebView webview;
     private Notice notice = null;
     
     public TitleHBox(WebView webview, Notice notice){
-        
+        this.webview = webview;
         this.notice = notice;
         
+        this.name.setText(notice.title);
+        this.title.setText(notice.superlink);
         this.getChildren().addAll(name, title);
         
         
-        WebEngine engine = webview.getEngine();
+        WebEngine engine = this.webview.getEngine();
         title.setOnAction(event -> {
             engine.load(title.getText());
         });
