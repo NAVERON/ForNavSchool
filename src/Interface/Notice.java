@@ -13,18 +13,16 @@ import java.util.Date;
  */
 public class Notice {
     
-    public String title = null;
-    public String content = null;
-    public Date date = null;
-    public String superlink = "http://www.baidu.com";
+    public String title;
+    public String content;
+    public Date date;
+    public String superlink;
     
     public Notice(String title, String content, Date date, String superlink){
         this.title = title;
         this.content = content;
         this.date = date;
-        if( !superlink.equals("") ){
-            this.superlink = superlink;
-        }
+        this.superlink = superlink;
         
     }
 }

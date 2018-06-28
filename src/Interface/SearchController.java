@@ -20,7 +20,8 @@ import javafx.stage.Stage;
 
 public class SearchController {
 
-    private Stage primaryStage = null;
+    private Stage primaryStage;
+    List<ResultHBox> lists;
     private Date from, to;
     private String keywords;
 
@@ -31,33 +32,34 @@ public class SearchController {
     @FXML
     private HBox mannual_hbox;
     @FXML
-    private DatePicker from_date;
+    private DatePicker from_datepicker;
     @FXML
-    private DatePicker to_date;
+    private DatePicker to_datepicker;
     @FXML
     private TextField keywords_textfield;
     @FXML
-    private VBox titles_boxes;   //左边添加链接
+    private VBox links_boxes;   //左边添加链接
     @FXML
     private WebView content_webview;  //右边显示的超链接网页界面
     
     public SearchController(Stage primaryStage) {
         this.primaryStage = primaryStage;
+        this.lists = new LinkedList<ResultHBox>();
     }
     
-    List<TitleHBox> lists = new LinkedList<TitleHBox>();
+    
     public void search(){
         //爬取信息的进程
         Notice notice = new Notice("", "", new Date(), "");
-        TitleHBox titlehbox = new TitleHBox(content_webview, notice);
+        ResultHBox titlehbox = new ResultHBox(content_webview, notice);
         lists.add(titlehbox);
         
         addTitles(lists);
     }
     
-    public void addTitles(List<TitleHBox> lists){
-        for(TitleHBox titlehbox : lists){
-            titles_boxes.getChildren().add(titlehbox);
+    public void addTitles(List<ResultHBox> lists){
+        for(ResultHBox titlehbox : lists){
+            links_boxes.getChildren().add(titlehbox);
         }
     }
 }

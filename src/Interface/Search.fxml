@@ -15,7 +15,7 @@
         <items>
             <ScrollPane prefViewportHeight="508.0" prefViewportWidth="178.0">
                <content>
-                  <VBox fx:id="titles_boxes" />
+                  <VBox fx:id="links_boxes" />
                </content>
             </ScrollPane>
             <WebView fx:id="content_webview" prefHeight="200.0" prefWidth="200.0" />
@@ -32,7 +32,7 @@
                         <Insets left="20.0" />
                      </HBox.margin>
                   </Label>
-                  <DatePicker fx:id="from_date">
+                  <DatePicker fx:id="from_datepicker">
                      <HBox.margin>
                         <Insets left="20.0" />
                      </HBox.margin>
@@ -42,7 +42,7 @@
                         <Insets left="20.0" />
                      </HBox.margin>
                   </Label>
-                  <DatePicker fx:id="to_date">
+                  <DatePicker fx:id="to_datepicker">
                      <HBox.margin>
                         <Insets left="20.0" />
                      </HBox.margin>
