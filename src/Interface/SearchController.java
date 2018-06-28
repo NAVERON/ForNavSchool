@@ -6,6 +6,7 @@
 package Interface;
 
 import java.util.Date;
+import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
@@ -35,7 +36,7 @@ public class SearchController {
     @FXML
     private TextField keywords_textfield;
     @FXML
-    private VBox titles_boxs;   //左边添加链接
+    private VBox titles_boxes;   //左边添加链接
     @FXML
     private WebView content_webview;  //右边显示的超链接网页界面
 
@@ -44,6 +45,12 @@ public class SearchController {
     }
     
     public void search(){
-        titles_boxs.getChildren().add(new TitleHBox(content_webview));
+        titles_boxes.getChildren().add(new TitleHBox(content_webview));
+    }
+    
+    public void addTitles(List<TitleHBox> lists){
+        for(TitleHBox titlehbox : lists){
+            titles_boxes.getChildren().add(titlehbox);
+        }
     }
 }

@@ -16,8 +16,11 @@ import javafx.scene.web.WebView;
  */
 public class TitleHBox extends HBox{
     private Hyperlink title = new Hyperlink("http://www.baidu.com");
+    
     public TitleHBox(WebView webview){
+        
         this.getChildren().add(title);
+        
         
         WebEngine engine = webview.getEngine();
         title.setOnAction(event -> {
