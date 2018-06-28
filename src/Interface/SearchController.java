@@ -6,6 +6,7 @@
 package Interface;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -44,8 +45,9 @@ public class SearchController {
         this.primaryStage = primaryStage;
     }
     
+    List<TitleHBox> list = new LinkedList<>();
     public void search(){
-        titles_boxes.getChildren().add(new TitleHBox(content_webview));
+        //爬取信息的进程
     }
     
     public void addTitles(List<TitleHBox> lists){

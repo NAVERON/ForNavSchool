@@ -6,6 +6,7 @@
 package Interface;
 
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -15,17 +16,29 @@ import javafx.scene.web.WebView;
  * @author ERON
  */
 public class TitleHBox extends HBox{
-    private Hyperlink title = new Hyperlink("http://www.baidu.com");
     
-    public TitleHBox(WebView webview){
+    private Label name = null;
+    private Hyperlink title = new Hyperlink("http://www.baidu.com");
+    private Label state = null;
+    
+    private Notice notice = null;
+    
+    public TitleHBox(WebView webview, Notice notice){
         
-        this.getChildren().add(title);
+        this.notice = notice;
+        
+        this.getChildren().addAll(name, title);
         
         
         WebEngine engine = webview.getEngine();
         title.setOnAction(event -> {
             engine.load(title.getText());
         });
+    }
+    
+    private void setBody(){
+        this.name.setText(this.notice.title);
+        
     }
     
 }
