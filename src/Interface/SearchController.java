@@ -52,11 +52,11 @@ public class SearchController {
         //爬取信息的进程
         String page;
 
-        Notice notice = new Notice("", "", new Date(), "");
-        ResultHBox titlehbox = new ResultHBox(content_webview, notice);
-        lists.add(titlehbox);
+        Notice notice = new Notice("wang", "content string and article", new Date(), "http://www.baidu.com");
+        ResultHBox resulthbox = new ResultHBox(content_webview, notice);
+        lists.add(resulthbox);
 
-        addTitles(lists);
+        addResults(lists);
     }
 
     class GetPageContent extends Task<ResultHBox>{
@@ -64,12 +64,12 @@ public class SearchController {
         @Override
         protected ResultHBox call() throws Exception {
             System.out.println("Interface.SearchController.GetPageContent.call()");
-            return new ResultHBox(content_webview, new Notice(keywords, keywords, to, keywords));
+            return new ResultHBox();
         }
         
     }
 
-    public void addTitles(List<ResultHBox> lists) {
+    public void addResults(List<ResultHBox> lists) {
         for (ResultHBox titlehbox : lists) {
             links_boxes.getChildren().add(titlehbox);
         }
