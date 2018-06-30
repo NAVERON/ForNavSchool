@@ -8,6 +8,7 @@ package Interface;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.FutureTask;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -55,16 +56,15 @@ public class SearchController {
         Notice notice = new Notice("wang", "content string and article", new Date(), "http://www.baidu.com");
         ResultHBox resulthbox = new ResultHBox(content_webview, notice);
         lists.add(resulthbox);
-
+        
+        lists.clear();
         addResults(lists);
     }
 
-    class GetPageContent extends Task<ResultHBox>{
-
-        @Override
-        protected ResultHBox call() throws Exception {
-            System.out.println("Interface.SearchController.GetPageContent.call()");
-            return new ResultHBox();
+    class GetPageContent extends FutureTask<ResultHBox>{
+        
+        public GetPageContent(Runnable runnable, ResultHBox result) {
+            super(runnable, result);
         }
         
     }
