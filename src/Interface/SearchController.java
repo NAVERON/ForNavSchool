@@ -5,12 +5,15 @@
  */
 package Interface;
 
+import java.net.URL;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.FutureTask;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ProgressBar;
@@ -20,7 +23,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
-public class SearchController {
+public class SearchController implements Initializable {
 
     private Stage primaryStage;
     List<ResultHBox> lists;
@@ -44,6 +47,15 @@ public class SearchController {
     @FXML
     private WebView content_webview;  //右边显示的超链接网页界面
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        Button clear_btn = new Button("ClearAll");
+        clear_btn.setOnAction((event) -> {
+            links_boxes.getChildren().remove(1, links_boxes.getChildren().size());
+        });
+        links_boxes.getChildren().add(clear_btn);
+    }
+
     public SearchController(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.lists = new LinkedList<ResultHBox>();
@@ -52,26 +64,26 @@ public class SearchController {
     public void search() {
         //爬取信息的进程
         String page;
-
-        Notice notice = new Notice("wang", "content string and article", new Date(), "http://www.baidu.com");
+        
+        Notice notice = new Notice("这里一共有20个汉字，确认是否能够完没显示", "content string and article", new Date(), "http://www.baidu.com");
         ResultHBox resulthbox = new ResultHBox(content_webview, notice);
-        lists.add(resulthbox);
         
         lists.clear();
+        lists.add(resulthbox);
         addResults(lists);
     }
-
-    class GetPageContent extends FutureTask<ResultHBox>{
-        
-        public GetPageContent(Runnable runnable, ResultHBox result) {
-            super(runnable, result);
-        }
+    
+    class GetPageContent {
         
     }
-
+    
     public void addResults(List<ResultHBox> lists) {
         for (ResultHBox titlehbox : lists) {
             links_boxes.getChildren().add(titlehbox);
         }
     }
+    
 }
+
+
+
