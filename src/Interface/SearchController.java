@@ -10,8 +10,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.FutureTask;
-import javafx.concurrent.Task;
+import java.util.concurrent.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -62,10 +61,11 @@ public class SearchController implements Initializable {
     }
 
     public void search() {
+        links_boxes.getChildren().remove(1, links_boxes.getChildren().size());
         //爬取信息的进程
         String page;
         
-        Notice notice = new Notice("这里一共有20个汉字，确认是否能够完没显示", "content string and article", new Date(), "http://www.baidu.com");
+        
         ResultHBox resulthbox = new ResultHBox(content_webview, notice);
         
         lists.clear();
@@ -73,7 +73,25 @@ public class SearchController implements Initializable {
         addResults(lists);
     }
     
-    class GetPageContent {
+    class GetNotice {
+        
+        public GetNotice(Date from, Date to, String keywords){
+            ExecutorService executor = Executors.newFixedThreadPool(2);
+            executor.shutdown();
+        }
+        
+    }
+    class ProcessPage implements  Callable<Notice>{
+        
+        public ProcessPage(URL url){
+            
+        }
+
+        @Override
+        public Notice call() throws Exception {
+            Notice notice = new Notice("这里一共有20个汉字，确认是否能够完没显示", "content string and article", new Date(), "http://www.baidu.com");
+            return notice;
+        }
         
     }
     
