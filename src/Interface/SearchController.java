@@ -8,7 +8,6 @@ package Interface;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +25,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.*;
 
 public class SearchController implements Initializable {
 
@@ -66,15 +67,16 @@ public class SearchController implements Initializable {
     }
 
     public void search() {
-        links_boxes.getChildren().remove(1, links_boxes.getChildren().size());
         //爬取信息的进程
         String page;
         
+        //ResultHBox resulthbox = new ResultHBox(content_webview, new Notice());
         
-        ResultHBox resulthbox = new ResultHBox(content_webview, new Notice());
+        ProcessPage processPage = new ProcessPage("https://github.com/NAVERON?tab=overview&from=2018-06-27");
+        processPage.getDocument();
         
         lists.clear();
-        lists.add(resulthbox);
+        
         addResults(lists);
     }
     
@@ -89,15 +91,16 @@ public class SearchController implements Initializable {
     }
     class ProcessPage implements  Callable<Notice>{  //多线程处理网页请求，异步处理，使用Jsoup库
         
-        public ProcessPage(URL url){
-            
+        private String url;
+        public ProcessPage(String url){
+            this.url = url;
         }
         
-        public void getDocument(String path){
+        public void getDocument(){
             try {
-                URL url = new URL(path);
-                URLConnection connection = url.openConnection();
-                connection.connect();
+                Document doc = Jsoup.connect(this.url).get();
+                String title = doc.title();
+                System.out.println(doc.body().toString());
             } catch (MalformedURLException ex) {
                 Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
