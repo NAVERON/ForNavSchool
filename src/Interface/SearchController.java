@@ -5,12 +5,17 @@
  */
 package Interface;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -73,18 +78,31 @@ public class SearchController implements Initializable {
         addResults(lists);
     }
     
-    class GetNotice {
+    class GetNotice {  //将获取的字符串打包成notice格式的数据结构
         
         public GetNotice(Date from, Date to, String keywords){
             ExecutorService executor = Executors.newFixedThreadPool(2);
             executor.shutdown();
         }
         
+        
     }
-    class ProcessPage implements  Callable<Notice>{
+    class ProcessPage implements  Callable<Notice>{  //多线程处理网页请求，异步处理，使用Jsoup库
         
         public ProcessPage(URL url){
             
+        }
+        
+        public void getDocument(String path){
+            try {
+                URL url = new URL(path);
+                URLConnection connection = url.openConnection();
+                connection.connect();
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         @Override
