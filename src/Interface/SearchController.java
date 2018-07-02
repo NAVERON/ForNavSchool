@@ -72,7 +72,7 @@ public class SearchController implements Initializable {
         
         //ResultHBox resulthbox = new ResultHBox(content_webview, new Notice());
         
-        ProcessPage processPage = new ProcessPage("https://github.com/NAVERON?tab=overview&from=2018-06-27");
+        ProcessPage processPage = new ProcessPage("http://i.whut.edu.cn/");
         processPage.getDocument();
         
         lists.clear();
