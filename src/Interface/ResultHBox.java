@@ -23,8 +23,6 @@ public class ResultHBox extends HBox{
     private Label box_content = new Label();
     private Label box_date = new Label();
     private Hyperlink box_superlink = new Hyperlink();
-    //表示当前状态
-    private Label state = new Label();
     //////////////////////////////////外界传进来的引用
     private WebView webview;
     private Notice notice = null;

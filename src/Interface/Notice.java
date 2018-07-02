@@ -18,6 +18,7 @@ public class Notice {
     public Date date;
     public String superlink;
     
+    public Notice(){}
     public Notice(String title, String content, Date date, String superlink){
         this.title = title;
         this.content = content;

@@ -32,7 +32,7 @@
                         <Insets left="20.0" />
                      </HBox.margin>
                   </Label>
-                  <DatePicker fx:id="from_datepicker">
+                  <DatePicker fx:id="from_datepicker" promptText="起始时间">
                      <HBox.margin>
                         <Insets left="20.0" />
                      </HBox.margin>
@@ -42,7 +42,7 @@
                         <Insets left="20.0" />
                      </HBox.margin>
                   </Label>
-                  <DatePicker fx:id="to_datepicker">
+                  <DatePicker fx:id="to_datepicker" promptText="结束时间">
                      <HBox.margin>
                         <Insets left="20.0" />
                      </HBox.margin>
@@ -52,24 +52,35 @@
                         <Insets left="20.0" />
                      </HBox.margin>
                   </Label>
-                  <TextField fx:id="keywords_textfield">
+                  <TextField fx:id="keywords_textfield" promptText="搜索超链接的关键字">
                      <HBox.margin>
                         <Insets left="20.0" />
                      </HBox.margin>
                   </TextField>
-               </children></HBox>
+               </children>
+            </HBox>
             <HBox fx:id="mannual_hbox" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Button fx:id="search_btn" mnemonicParsing="false" onAction="#search" text="Search">
+                  <Label text="Department">
                      <HBox.margin>
                         <Insets left="20.0" />
                      </HBox.margin>
-                  </Button>
+                  </Label>
+                  <TextField fx:id="department_textfield" promptText="请输入部门名称">
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin>
+                  </TextField>
                   <ProgressBar fx:id="search_progress" prefWidth="200.0" progress="0.0">
                      <HBox.margin>
                         <Insets left="20.0" />
                      </HBox.margin>
                   </ProgressBar>
+                  <Button fx:id="search_btn" mnemonicParsing="false" onAction="#search" text="Search">
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin>
+                  </Button>
                </children></HBox>
          </children>
       </VBox>

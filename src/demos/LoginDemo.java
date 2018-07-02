@@ -9,9 +9,10 @@ package demos;
  *
  * @author ERON
  */
-public class LoginDemo {
+public class LoginDemo {  //测试特定功能的临时Java文件
     
     public static void main(String[] args){
         System.out.println("hello world");
     }
+    
 }

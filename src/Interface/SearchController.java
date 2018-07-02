@@ -25,9 +25,9 @@ import javafx.stage.Stage;
 public class SearchController implements Initializable {
 
     private Stage primaryStage;
-    List<ResultHBox> lists;
+    private List<ResultHBox> lists;
     private Date from, to;
-    private String keywords;
+    private String keywords, department;
 
     @FXML
     private Button search_btn;
@@ -40,7 +40,7 @@ public class SearchController implements Initializable {
     @FXML
     private DatePicker to_datepicker;
     @FXML
-    private TextField keywords_textfield;
+    private TextField keywords_textfield, department_textfield;
     @FXML
     private VBox links_boxes;   //左边添加链接
     @FXML
@@ -66,7 +66,7 @@ public class SearchController implements Initializable {
         String page;
         
         
-        ResultHBox resulthbox = new ResultHBox(content_webview, notice);
+        ResultHBox resulthbox = new ResultHBox(content_webview, new Notice());
         
         lists.clear();
         lists.add(resulthbox);

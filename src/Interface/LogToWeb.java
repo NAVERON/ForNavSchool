@@ -10,10 +10,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-/**
- *
- * @author ERON
- */
 public class LogToWeb extends Application {
     
     public static String PROJECT_NAME = "武汉理工大学通知搜索平台";
