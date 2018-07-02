@@ -34,7 +34,7 @@ public class SearchController implements Initializable {
     private List<ResultHBox> lists;
     private Date from, to;
     private String keywords, department;
-
+    
     @FXML
     private Button search_btn;
     @FXML
@@ -51,7 +51,7 @@ public class SearchController implements Initializable {
     private VBox links_boxes;   //左边添加链接
     @FXML
     private WebView content_webview;  //右边显示的超链接网页界面
-
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Button clear_btn = new Button("ClearAll");
@@ -68,53 +68,35 @@ public class SearchController implements Initializable {
 
     public void search() {
         //爬取信息的进程
-        String page;
+        String url = "http://i.whut.edu.cn/";
         
-        //ResultHBox resulthbox = new ResultHBox(content_webview, new Notice());
-        
-        ProcessPage processPage = new ProcessPage("http://i.whut.edu.cn/");
-        processPage.getDocument();
+        ProcessPage processpage = new ProcessPage(url);
+        FutureTask<Notice> futuretask = new FutureTask<>(processpage);
+        ExecutorService executer = Executors.newCachedThreadPool();
+        executer.submit(futuretask);
+        executer.shutdown();
         
         lists.clear();
-        
         addResults(lists);
     }
     
-    class GetNotice {  //将获取的字符串打包成notice格式的数据结构
-        
-        public GetNotice(Date from, Date to, String keywords){
-            ExecutorService executor = Executors.newFixedThreadPool(2);
-            executor.shutdown();
-        }
-        
-        
-    }
-    class ProcessPage implements  Callable<Notice>{  //多线程处理网页请求，异步处理，使用Jsoup库
+    class ProcessPage implements Callable<Notice>{  //多线程处理网页请求，异步处理，使用Jsoup库
         
         private String url;
         public ProcessPage(String url){
             this.url = url;
         }
-        
-        public void getDocument(){
-            try {
-                Document doc = Jsoup.connect(this.url).get();
-                String title = doc.title();
-                System.out.println(doc.body().toString());
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
 
         @Override
         public Notice call() throws Exception {
-            Notice notice = new Notice("这里一共有20个汉字，确认是否能够完没显示", "content string and article", new Date(), "http://www.baidu.com");
-            return notice;
+            Document doc = Jsoup.connect(this.url).get();
+            String result = doc.toString();
+            System.out.println(result);
+            return null;
         }
         
     }
+    
     
     public void addResults(List<ResultHBox> lists) {
         for (ResultHBox titlehbox : lists) {
