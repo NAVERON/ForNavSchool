@@ -39,15 +39,14 @@ public class SearchController implements Initializable {
     private String keywords, department;
     /*
     LocalDate localDate = datePicker.getValue();
-Instant instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()));
-Date date = Date.from(instant);
-System.out.println(localDate + "\n" + instant + "\n" + date);
-    
+    Instant instant = Instant.from(localDate.atStartOfDay(ZoneId.systemDefault()));
+    Date date = Date.from(instant);
+    System.out.println(localDate + "\n" + instant + "\n" + date);
     
     Date date = new Date();
-Instant instant = date.toInstant();
-LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-System.out.println(date + "\n" + instant + "\n" + localDate);
+    Instant instant = date.toInstant();
+    LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+    System.out.println(date + "\n" + instant + "\n" + localDate);
      */
     @FXML
     private Button search_btn;
@@ -74,7 +73,7 @@ System.out.println(date + "\n" + instant + "\n" + localDate);
         });
         to_datepicker.setValue(LocalDate.now());  //设置现在为搜索结束时间
         links_boxes.getChildren().add(clear_btn);  //添加清空搜索结果的按钮
-
+        
     }
 
     public SearchController(Stage primaryStage) {
@@ -89,6 +88,7 @@ System.out.println(date + "\n" + instant + "\n" + localDate);
         this.to = to_datepicker.getValue();
         this.keywords = keywords_textfield.getText();
         this.department = department_textfield.getText();
+        System.out.println(from.toString() + "\n" + to.toString());
 
         ProcessPage processpage = new ProcessPage(url);
         FutureTask<List<Notice>> futuretask = new FutureTask<>(processpage);
@@ -105,7 +105,7 @@ System.out.println(date + "\n" + instant + "\n" + localDate);
     }
 
     public boolean verifyInput() {  //检测输入数据的正确性
-
+        
         return true;
     }
 
@@ -122,7 +122,7 @@ System.out.println(date + "\n" + instant + "\n" + localDate);
         public List<Notice> call() throws Exception {
             Document doc = Jsoup.connect(this.url).get();
             String result = doc.toString();
-            System.out.println(result);
+            
             while (true) {
                 System.out.println(process.get());
                 process.add(10);
