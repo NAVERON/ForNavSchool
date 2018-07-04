@@ -7,30 +7,24 @@ package Interface;
 
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.*;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.FloatProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleFloatProperty;
-import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-import jdk.nashorn.internal.ir.BreakNode;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
+import org.jsoup.select.*;
 
 public class SearchController implements Initializable {
 
@@ -81,13 +75,15 @@ public class SearchController implements Initializable {
     //根据学院搜索，department输入学院名称
     //根据部门通知公告搜索，department输入部门名称
     //不输入department，搜索页面中的所有超链接            相关关键字       内容
+    ExecutorService executer = Executors.newCachedThreadPool();
+    ProcessPage processpage;
+    FutureTask<List<Notice>> futuretask;
     public void search() {
         //截面数据输入
         this.from = from_datepicker.getValue();
         this.to = to_datepicker.getValue();
         this.keywords = keywords_textfield.getText();
         this.department = department_textfield.getText();
-        System.out.println(from + "\n" + to);
         if (keywords.trim().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setContentText("请输入关键字");
@@ -95,12 +91,16 @@ public class SearchController implements Initializable {
             return;
         }
         //取消了验证，如果没有关键字则显示所有的链接
-        ExecutorService executer = Executors.newCachedThreadPool();
-        ProcessPage processpage = new ProcessPage(this.from, this.to, this.keywords, this.department);  //链接内置
-        FutureTask<List<Notice>> futuretask = new FutureTask<>(processpage);
+        
+        processpage = new ProcessPage(this.from, this.to, this.keywords, this.department);  //链接内置
+        futuretask = new FutureTask<>(processpage);
         search_progress.progressProperty().bind(processpage.process);  //绑定进度
         executer.submit(futuretask);
 
+    }
+    public void cancle_search(){
+        System.out.println("cancle search process");
+        futuretask.cancel(true);
     }
 
     class ProcessPage implements Callable<List<Notice>> {  //多线程处理网页请求，异步处理，使用Jsoup库
@@ -121,25 +121,38 @@ public class SearchController implements Initializable {
             }
             
         }
-        //关于搜索中需要使用的变量存储
-
+        //  关于搜索中需要使用的变量存储
+        //  process.set(process.get() + 0.2);
         @Override
         public List<Notice> call() throws Exception {
-
-            for (String search_url : urls) {
+            
+            Map<String, String> depart_name = new HashMap<String, String>();
+            for (String search_url : urls) {       //这里获取所有大标题
                 Document doc = Jsoup.connect(search_url).get();
-                String result = doc.toString();
-                while (true) {
-                    process.set(process.get() + 0.2);
-                    System.out.println(process.getValue());
-                    Thread.sleep(500);
-                    if (process.getValue() > 1) {
-                        process.set(0);
-                        break;
+                Elements by_class = doc.getElementsByClass("text_list_menu2");
+                for(Element class_list : by_class){
+                    Elements by_tag = class_list.getElementsByTag("a");
+                    for(Element a_tag : by_tag){  //各个school的名称和对应的超链接
+                        depart_name.put(a_tag.text(), a_tag.attr("href"));
                     }
                 }
             }
-
+            //根据部门号查找，超链接，添加到
+            List<String> need_search = new LinkedList<String>();
+            if(this.department.isEmpty()){
+                for(String key : depart_name.keySet()){
+                    need_search.add(depart_name.get(key));  //添加所有链接
+                }
+            }
+            else{
+                for(String key : depart_name.keySet()){
+                    if( key.contains(this.department) ){
+                        need_search.add(depart_name.get(key));
+                    }
+                }
+            }
+            //现在need_search是所有需要搜索关键字的链接了
+            
             return notices;
         }
 
