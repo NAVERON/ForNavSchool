@@ -152,7 +152,14 @@ public class SearchController implements Initializable {
                 }
             }
             //现在need_search是所有需要搜索关键字的链接了
-            
+            for(String url : need_search){
+                
+                Document doc = Jsoup.connect(url).get();
+                //先判断总体情况
+                Elements number_by_class = doc.getElementsByClass("num_nav");
+                System.out.println(number_by_class);
+                //Elements by_class = doc.getElementsByClass("normal_list2");
+            }
             return notices;
         }
 
