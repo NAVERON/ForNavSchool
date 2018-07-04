@@ -81,6 +81,11 @@
                         <Insets left="20.0" />
                      </HBox.margin>
                   </Button>
+                  <Button fx:id="cancle_btn" mnemonicParsing="false" onAction="#search" text="Cancle">
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin>
+                  </Button>
                </children></HBox>
          </children>
       </VBox>
