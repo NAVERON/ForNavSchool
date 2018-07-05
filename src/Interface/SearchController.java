@@ -116,10 +116,7 @@ public class SearchController implements Initializable {
             this.from = from;
             this.to = to;
             this.keywords = keywords;
-            if( !department.isEmpty() ){
-                this.department = department;
-            }
-            
+            this.department = department;
         }
         //  关于搜索中需要使用的变量存储
         //  process.set(process.get() + 0.2);
