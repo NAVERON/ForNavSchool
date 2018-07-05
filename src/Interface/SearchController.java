@@ -161,8 +161,15 @@ public class SearchController implements Initializable {
                 //先做后面的内容，这个问题解决不了
                 Element by_class = doc.getElementsByClass("normal_list2").first();
                 System.out.println(by_class);
-                Elements get_a_by_tag = by_class.select("a[href]");
+                Elements get_a_by_tag = by_class.select("a[href]");  //这里不正确，应当对应的获取，而不能这样
                 Elements get_date_by_tag = by_class.select("strong");
+                //判断题目的主要内容是否包含关键字，如果有则下面进行创建新的对象存储
+                //没有则跳过
+                Notice temp = new Notice(
+                        get_a_by_tag.attr(""),
+                        Jsoup.connect(get_a_by_tag.attr("title")).get().toString(), LocalDate.parse(get_date_by_tag.text()), get_a_by_tag.attr("abs:href")
+                );
+                notices.add(temp);
             }
             return notices;
         }

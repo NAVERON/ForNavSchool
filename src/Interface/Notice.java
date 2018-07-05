@@ -5,6 +5,7 @@
  */
 package Interface;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -15,11 +16,11 @@ public class Notice {
     
     public String title;
     public String content;
-    public Date date;
+    public LocalDate date;
     public String superlink;
     
     public Notice(){}
-    public Notice(String title, String content, Date date, String superlink){
+    public Notice(String title, String content, LocalDate date, String superlink){
         this.title = title;
         this.content = content;
         this.date = date;
