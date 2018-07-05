@@ -151,11 +151,18 @@ public class SearchController implements Initializable {
             //现在need_search是所有需要搜索关键字的链接了
             for(String url : need_search){
                 
-                Document doc = Jsoup.connect(url).get();
+                Document doc = Jsoup.connect(url).timeout(10*1000).get();
                 //先判断总体情况
-                Elements number_by_class = doc.getElementsByClass("num_nav");
-                System.out.println(number_by_class);
+                //Elements number_by_class = doc.getElementsByClass("num_nav");
+                
                 //Elements by_class = doc.getElementsByClass("normal_list2");
+                //需要使用动态解析网页
+                
+                //先做后面的内容，这个问题解决不了
+                Element by_class = doc.getElementsByClass("normal_list2").first();
+                System.out.println(by_class);
+                Elements get_a_by_tag = by_class.select("a[href]");
+                Elements get_date_by_tag = by_class.select("strong");
             }
             return notices;
         }
