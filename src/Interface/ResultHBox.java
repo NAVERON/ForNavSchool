@@ -42,8 +42,7 @@ public class ResultHBox extends HBox{
     private void setBody(){
         box_title.setText(notice.title);
         box_title.setTooltip(new Tooltip(notice.superlink));
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-        box_date.setText(sdf.format(notice.date));
+        box_date.setText(notice.date.toString());
         
         //界面更新
         getChildren().addAll(box_title, box_date);

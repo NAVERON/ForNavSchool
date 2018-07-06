@@ -13,8 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.concurrent.Worker;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -79,6 +83,8 @@ public class SearchController implements Initializable {
     ProcessPage processpage;
     FutureTask<List<Notice>> futuretask;
     public void search() {
+        lists.clear();
+        links_boxes.getChildren().clear();
         //截面数据输入
         this.from = from_datepicker.getValue();
         this.to = to_datepicker.getValue();
@@ -91,23 +97,26 @@ public class SearchController implements Initializable {
             return;
         }
         //取消了验证，如果没有关键字则显示所有的链接
-        
         processpage = new ProcessPage(this.from, this.to, this.keywords, this.department);  //链接内置
         futuretask = new FutureTask<>(processpage);
         search_progress.progressProperty().bind(processpage.process);  //绑定进度
+        
         executer.submit(futuretask);
-
+        
     }
     public void cancle_search(){
-        System.out.println("cancle search process");
         futuretask.cancel(true);
+        processpage.process.set(0);
+        Alert cancle_alert = new Alert(Alert.AlertType.WARNING);
+        cancle_alert.showAndWait();
+        
+        addResultHBox(lists);
     }
 
     class ProcessPage implements Callable<List<Notice>> {  //多线程处理网页请求，异步处理，使用Jsoup库
 
         private String[] urls = {"http://i.whut.edu.cn/xxtg/", "http://i.whut.edu.cn/xyxw/"};
         private DoubleProperty process = new SimpleDoubleProperty(0);  //进度表示
-        private List<Notice> notices = new LinkedList<Notice>();  //用来返回结果
 
         private LocalDate from, to;
         private String keywords, department;
@@ -160,27 +169,36 @@ public class SearchController implements Initializable {
                 
                 //先做后面的内容，这个问题解决不了
                 Element by_class = doc.getElementsByClass("normal_list2").first();
-                System.out.println(by_class);
-                Elements get_a_by_tag = by_class.select("a[href]");  //这里不正确，应当对应的获取，而不能这样
-                Elements get_date_by_tag = by_class.select("strong");
-                //判断题目的主要内容是否包含关键字，如果有则下面进行创建新的对象存储
-                //没有则跳过
-                Notice temp = new Notice(
-                        get_a_by_tag.attr(""),
-                        Jsoup.connect(get_a_by_tag.attr("title")).get().toString(), LocalDate.parse(get_date_by_tag.text()), get_a_by_tag.attr("abs:href")
-                );
-                notices.add(temp);
+                Elements get_li = by_class.getElementsByTag("li");
+                int size = get_li.size();  //总数
+                int index = 0;
+                for(Element li : get_li){
+                    index++;  //界面进度条显示进度
+                    process.set(index/size);
+                    
+                    Element a = li.select("a").first();
+                    Element strong = li.select("strong").first();
+                    //提取信息进行筛选
+                    String title = a.attr("title");  //名称
+                    String link = a.attr("abs:href");  //超链接
+                    String content = Jsoup.connect(link).get().getElementById("divToPrint").toString();  //连接内容，方便以后增加分析层
+                    LocalDate date = LocalDate.parse(strong.text());
+                    if(date.isAfter(from) && date.isBefore(to)){
+                        if (title.contains(keywords)) {
+                            Notice temp = new Notice(title, Jsoup.connect(link).get().getElementById("divToPrint").toString(), LocalDate.parse(strong.text()), link);
+                            lists.add(temp);
+                        }
+                    }
+                }
             }
-            return notices;
+            //搜索完毕
+            process.set(0);
+            return lists;
         }
 
     }
 
     public void addResultHBox(List<Notice> lists) {
-        //首先清空以前的搜索结果
-        if (!links_boxes.getChildren().isEmpty()) {
-            links_boxes.getChildren().clear();
-        }
         //根据搜索结果添加到界面显示
         for (Notice notice : lists) {
             links_boxes.getChildren().add(new ResultHBox(content_webview, notice));
