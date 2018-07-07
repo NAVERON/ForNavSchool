@@ -79,7 +79,7 @@ public class SearchController implements Initializable {
     //根据学院搜索，department输入学院名称
     //根据部门通知公告搜索，department输入部门名称
     //不输入department，搜索页面中的所有超链接            相关关键字       内容
-    ExecutorService executer = Executors.newCachedThreadPool();
+    ExecutorService executer = Executors.newSingleThreadExecutor();
     ProcessPage processpage;
     FutureTask<List<Notice>> futuretask;
     public void search() {
@@ -101,15 +101,35 @@ public class SearchController implements Initializable {
         futuretask = new FutureTask<>(processpage);
         search_progress.progressProperty().bind(processpage.process);  //绑定进度
         
-        executer.submit(futuretask);
+        FutureTask<Integer> next = new FutureTask<Integer>(new Task(links_boxes, lists, content_webview));
         
+        executer.submit(futuretask);
+        executer.submit(next);
+        executer.shutdown();
+    }
+    class Task implements Callable<Integer> {
+        VBox boxes;
+        List<Notice> in_list;
+        WebView view;
+        public Task(VBox boxes, List<Notice> in_list, WebView view){
+            this.boxes = boxes;
+            this.in_list = in_list;
+            this.view = view;
+        }
+        @Override
+        public Integer call() throws Exception {  //测试中-------------------测试证明，就算传入参数也无法像cancle里那样实现更新界面的操作，不知道为i什么
+            for (Notice notice : in_list) {
+                System.out.println("进去了循环");
+                boxes.getChildren().add(new ResultHBox(view, notice));
+                System.out.println("添加完成");
+            }
+            return 0;
+        }
     }
     public void cancle_search(){
         futuretask.cancel(true);
         processpage.process.set(0);
-        Alert cancle_alert = new Alert(Alert.AlertType.WARNING);
-        cancle_alert.showAndWait();
-        
+        System.out.println("取消任务");
         addResultHBox(lists);
     }
 
@@ -132,8 +152,8 @@ public class SearchController implements Initializable {
         @Override
         public List<Notice> call() throws Exception {
             
-            Map<String, String> depart_name = new HashMap<String, String>();
-            for (String search_url : urls) {       //这里获取所有大标题
+            Map<String, String> depart_name = new HashMap<String, String>();  //部门号对应的超链接，大类
+            for (String search_url : urls) {       //这里获取所有大标题，两大块搜索，部门和学院
                 Document doc = Jsoup.connect(search_url).get();
                 Elements by_class = doc.getElementsByClass("text_list_menu2");
                 for(Element class_list : by_class){
@@ -144,13 +164,12 @@ public class SearchController implements Initializable {
                 }
             }
             //根据部门号查找，超链接，添加到
-            List<String> need_search = new LinkedList<String>();
+            List<String> need_search = new LinkedList<String>();  //先筛选部门和学院
             if(this.department.isEmpty()){
                 for(String key : depart_name.keySet()){
                     need_search.add(depart_name.get(key));  //添加所有链接
                 }
-            }
-            else{
+            }else{
                 for(String key : depart_name.keySet()){
                     if( key.contains(this.department) ){
                         need_search.add(depart_name.get(key));
@@ -158,12 +177,10 @@ public class SearchController implements Initializable {
                 }
             }
             //现在need_search是所有需要搜索关键字的链接了
-            for(String url : need_search){
-                
+            for(String url : need_search){   //点开大部门的链接
                 Document doc = Jsoup.connect(url).timeout(10*1000).get();
                 //先判断总体情况
                 //Elements number_by_class = doc.getElementsByClass("num_nav");
-                
                 //Elements by_class = doc.getElementsByClass("normal_list2");
                 //需要使用动态解析网页
                 
@@ -201,7 +218,9 @@ public class SearchController implements Initializable {
     public void addResultHBox(List<Notice> lists) {
         //根据搜索结果添加到界面显示
         for (Notice notice : lists) {
+            System.out.println("进去了循环");
             links_boxes.getChildren().add(new ResultHBox(content_webview, notice));
+            System.out.println("添加完成");
         }
     }
 
