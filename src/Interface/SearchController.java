@@ -15,8 +15,10 @@ import java.util.ResourceBundle;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
@@ -101,36 +103,37 @@ public class SearchController implements Initializable {
         futuretask = new FutureTask<>(processpage);
         search_progress.progressProperty().bind(processpage.process);  //绑定进度
         
-        FutureTask<Integer> next = new FutureTask<Integer>(new Task(links_boxes, lists, content_webview));
+        Task updateUI = new Task<Void>() {
+            @Override
+            public Void call() {
+                try {
+                    while (true) {                        
+                        if (futuretask.isDone()) {
+                            addResultHBox();
+                            break;
+                        } else {
+                            Thread.sleep(500);
+                        }
+                    }
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                return null;
+            }
+
+        };
+        Thread next = new Thread(updateUI);
+        next.setDaemon(true);
+        next.start();
         
         executer.submit(futuretask);
-        executer.submit(next);
         executer.shutdown();
-    }
-    class Task implements Callable<Integer> {
-        VBox boxes;
-        List<Notice> in_list;
-        WebView view;
-        public Task(VBox boxes, List<Notice> in_list, WebView view){
-            this.boxes = boxes;
-            this.in_list = in_list;
-            this.view = view;
-        }
-        @Override
-        public Integer call() throws Exception {  //测试中-------------------测试证明，就算传入参数也无法像cancle里那样实现更新界面的操作，不知道为i什么
-            for (Notice notice : in_list) {
-                System.out.println("进去了循环");
-                boxes.getChildren().add(new ResultHBox(view, notice));
-                System.out.println("添加完成");
-            }
-            return 0;
-        }
     }
     public void cancle_search(){
         futuretask.cancel(true);
         processpage.process.set(0);
         System.out.println("取消任务");
-        addResultHBox(lists);
+        addResultHBox();
     }
 
     class ProcessPage implements Callable<List<Notice>> {  //多线程处理网页请求，异步处理，使用Jsoup库
@@ -215,13 +218,13 @@ public class SearchController implements Initializable {
 
     }
 
-    public void addResultHBox(List<Notice> lists) {
+    public void addResultHBox() {
         //根据搜索结果添加到界面显示
-        for (Notice notice : lists) {
-            System.out.println("进去了循环");
-            links_boxes.getChildren().add(new ResultHBox(content_webview, notice));
-            System.out.println("添加完成");
-        }
+        Platform.runLater(() -> {
+            for (Notice notice : lists) {
+                links_boxes.getChildren().add(new ResultHBox(content_webview, notice));
+            }
+        });
     }
 
 }

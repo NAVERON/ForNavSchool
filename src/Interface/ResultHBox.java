@@ -5,7 +5,7 @@
  */
 package Interface;
 
-import java.text.SimpleDateFormat;
+import javafx.geometry.Insets;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -31,6 +31,7 @@ public class ResultHBox extends HBox{
     public ResultHBox(WebView webview, Notice notice){  //显示以当前组件为主，数据以notice为主
         this.webview = webview;
         this.notice = notice;
+        this.setPadding(new Insets(5, 5, 5, 5));
         setBody();
         
         WebEngine engine = this.webview.getEngine();
