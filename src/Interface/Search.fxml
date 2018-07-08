@@ -11,9 +11,9 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <SplitPane dividerPositions="0.1813627254509018" BorderPane.alignment="CENTER">
+      <SplitPane dividerPositions="0.31" BorderPane.alignment="CENTER">
         <items>
-            <ScrollPane prefViewportHeight="508.0" prefViewportWidth="178.0">
+            <ScrollPane prefViewportHeight="508.0" prefViewportWidth="178.0" prefWidth="200.0">
                <content>
                   <VBox fx:id="links_boxes" />
                </content>

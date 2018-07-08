@@ -5,11 +5,16 @@
  */
 package Interface;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
@@ -32,9 +37,16 @@ public class ResultHBox extends HBox{
         this.webview = webview;
         this.notice = notice;
         this.setPadding(new Insets(5, 5, 5, 5));
+        this.styleProperty().bind(Bindings
+                .when(hoverProperty())
+                .then(new SimpleStringProperty("-fx-background-color: #B0C4DE;"))
+                .otherwise(new SimpleStringProperty("-fx-background-color: #F4F4F4;"))
+        );
         setBody();
         
         WebEngine engine = this.webview.getEngine();
+        box_title.setWrapText(true);
+        box_title.setPrefWidth(200);
         box_title.setOnMouseClicked((event) -> {
             engine.load(notice.superlink);
         });

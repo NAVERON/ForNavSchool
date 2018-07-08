@@ -92,12 +92,6 @@ public class SearchController implements Initializable {
         this.to = to_datepicker.getValue();
         this.keywords = keywords_textfield.getText();
         this.department = department_textfield.getText();
-        if (keywords.trim().isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setContentText("请输入关键字");
-            alert.showAndWait();
-            return;
-        }
         //取消了验证，如果没有关键字则显示所有的链接
         processpage = new ProcessPage(this.from, this.to, this.keywords, this.department);  //链接内置
         futuretask = new FutureTask<>(processpage);
@@ -107,7 +101,7 @@ public class SearchController implements Initializable {
             @Override
             public Void call() {
                 try {
-                    while (true) {                        
+                    while (true) {
                         if (futuretask.isDone()) {
                             addResultHBox();
                             break;
@@ -120,20 +114,17 @@ public class SearchController implements Initializable {
                 }
                 return null;
             }
-
         };
         Thread next = new Thread(updateUI);
-        next.setDaemon(true);
         next.start();
         
         executer.submit(futuretask);
-        executer.shutdown();
+        executer.submit(next);
     }
     public void cancle_search(){
         futuretask.cancel(true);
         processpage.process.set(0);
-        System.out.println("取消任务");
-        addResultHBox();
+        
     }
 
     class ProcessPage implements Callable<List<Notice>> {  //多线程处理网页请求，异步处理，使用Jsoup库
@@ -158,12 +149,10 @@ public class SearchController implements Initializable {
             Map<String, String> depart_name = new HashMap<String, String>();  //部门号对应的超链接，大类
             for (String search_url : urls) {       //这里获取所有大标题，两大块搜索，部门和学院
                 Document doc = Jsoup.connect(search_url).get();
-                Elements by_class = doc.getElementsByClass("text_list_menu2");
-                for(Element class_list : by_class){
-                    Elements by_tag = class_list.getElementsByTag("a");
-                    for(Element a_tag : by_tag){  //各个school的名称和对应的超链接
-                        depart_name.put(a_tag.text(), a_tag.attr("href"));
-                    }
+                Element by_class = doc.getElementsByClass("text_list_menu2").first();
+                Elements by_tag = by_class.getElementsByTag("a");
+                for (Element a_tag : by_tag) {  //各个school的名称和对应的超链接
+                    depart_name.put(a_tag.text(), a_tag.attr("href"));
                 }
             }
             //根据部门号查找，超链接，添加到
@@ -172,7 +161,7 @@ public class SearchController implements Initializable {
                 for(String key : depart_name.keySet()){
                     need_search.add(depart_name.get(key));  //添加所有链接
                 }
-            }else{
+            } else {
                 for(String key : depart_name.keySet()){
                     if( key.contains(this.department) ){
                         need_search.add(depart_name.get(key));
@@ -192,7 +181,7 @@ public class SearchController implements Initializable {
                 Elements get_li = by_class.getElementsByTag("li");
                 int size = get_li.size();  //总数
                 int index = 0;
-                for(Element li : get_li){
+                for(Element li : get_li) {
                     index++;  //界面进度条显示进度
                     process.set(index/size);
                     
@@ -203,11 +192,14 @@ public class SearchController implements Initializable {
                     String link = a.attr("abs:href");  //超链接
                     String content = Jsoup.connect(link).get().getElementById("divToPrint").toString();  //连接内容，方便以后增加分析层
                     LocalDate date = LocalDate.parse(strong.text());
+                    Notice temp = null;
                     if(date.isAfter(from) && date.isBefore(to)){
-                        if (title.contains(keywords)) {
-                            Notice temp = new Notice(title, Jsoup.connect(link).get().getElementById("divToPrint").toString(), LocalDate.parse(strong.text()), link);
-                            lists.add(temp);
+                        if(keywords.equals("")){
+                            temp = new Notice(title, Jsoup.connect(link).get().getElementById("divToPrint").toString(), date, link);
+                        }else if (title.contains(keywords)) {
+                            temp = new Notice(title, Jsoup.connect(link).get().getElementById("divToPrint").toString(), date, link);
                         }
+                        lists.add(temp);
                     }
                 }
             }
@@ -215,12 +207,17 @@ public class SearchController implements Initializable {
             process.set(0);
             return lists;
         }
-
     }
 
     public void addResultHBox() {
         //根据搜索结果添加到界面显示
         Platform.runLater(() -> {
+            System.out.println(lists.size());
+            if (lists.isEmpty()) {
+                Alert empty = new Alert(Alert.AlertType.WARNING);
+                empty.setContentText("Nothing!!");
+                empty.showAndWait();
+            }
             for (Notice notice : lists) {
                 links_boxes.getChildren().add(new ResultHBox(content_webview, notice));
             }
