@@ -148,7 +148,7 @@ public class SearchController implements Initializable {
             
             Map<String, String> depart_name = new HashMap<String, String>();  //部门号对应的超链接，大类
             for (String search_url : urls) {       //这里获取所有大标题，两大块搜索，部门和学院
-                Document doc = Jsoup.connect(search_url).get();
+                Document doc = Jsoup.connect(search_url).timeout(10*1000).get();
                 Element by_class = doc.getElementsByClass("text_list_menu2").first();
                 Elements by_tag = by_class.getElementsByTag("a");
                 for (Element a_tag : by_tag) {  //各个school的名称和对应的超链接
@@ -190,14 +190,14 @@ public class SearchController implements Initializable {
                     //提取信息进行筛选
                     String title = a.attr("title");  //名称
                     String link = a.attr("abs:href");  //超链接
-                    String content = Jsoup.connect(link).get().getElementById("divToPrint").toString();  //连接内容，方便以后增加分析层
+                    String content = Jsoup.connect(link).timeout(10*1000).get().getElementById("divToPrint").toString();  //连接内容，方便以后增加分析层
                     LocalDate date = LocalDate.parse(strong.text());
                     Notice temp = null;
                     if(date.isAfter(from) && date.isBefore(to)){
-                        if(keywords.equals("")){
-                            temp = new Notice(title, Jsoup.connect(link).get().getElementById("divToPrint").toString(), date, link);
+                        if(keywords.isEmpty()){
+                            temp = new Notice(title, Jsoup.connect(link).timeout(10*1000).get().getElementById("divToPrint").toString(), date, link);
                         }else if (title.contains(keywords)) {
-                            temp = new Notice(title, Jsoup.connect(link).get().getElementById("divToPrint").toString(), date, link);
+                            temp = new Notice(title, Jsoup.connect(link).timeout(10*1000).get().getElementById("divToPrint").toString(), date, link);
                         }
                         lists.add(temp);
                     }
