@@ -19,8 +19,6 @@ import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.concurrent.Task;
-import javafx.concurrent.Worker;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -168,6 +166,8 @@ public class SearchController implements Initializable {
                     }
                 }
             }
+            
+            System.out.println(need_search.toString());
             //现在need_search是所有需要搜索关键字的链接了
             for(String url : need_search){   //点开大部门的链接
                 Document doc = Jsoup.connect(url).timeout(10*1000).get();
@@ -196,10 +196,11 @@ public class SearchController implements Initializable {
                     if(date.isAfter(from) && date.isBefore(to)){
                         if(keywords.isEmpty()){
                             temp = new Notice(title, Jsoup.connect(link).timeout(10*1000).get().getElementById("divToPrint").toString(), date, link);
+                            lists.add(temp);
                         }else if (title.contains(keywords)) {
                             temp = new Notice(title, Jsoup.connect(link).timeout(10*1000).get().getElementById("divToPrint").toString(), date, link);
+                            lists.add(temp);
                         }
-                        lists.add(temp);
                     }
                 }
             }
