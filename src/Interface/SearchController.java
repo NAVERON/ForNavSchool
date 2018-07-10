@@ -7,6 +7,7 @@ package Interface;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -82,6 +83,7 @@ public class SearchController implements Initializable {
     ExecutorService executer = Executors.newSingleThreadExecutor();
     ProcessPage processpage;
     FutureTask<List<Notice>> futuretask;
+
     public void search() {
         lists.clear();
         links_boxes.getChildren().clear();
@@ -94,7 +96,7 @@ public class SearchController implements Initializable {
         processpage = new ProcessPage(this.from, this.to, this.keywords, this.department);  //链接内置
         futuretask = new FutureTask<>(processpage);
         search_progress.progressProperty().bind(processpage.process);  //绑定进度
-        
+
         Task updateUI = new Task<Void>() {
             @Override
             public Void call() {
@@ -115,14 +117,16 @@ public class SearchController implements Initializable {
         };
         Thread next = new Thread(updateUI);
         next.start();
-        
+
         executer.submit(futuretask);
         executer.submit(next);
     }
-    public void cancle_search(){
+
+    public void cancle_search() {
         futuretask.cancel(true);
         processpage.process.set(0);
-        
+        executer.shutdownNow();
+        addResultHBox();
     }
 
     class ProcessPage implements Callable<List<Notice>> {  //多线程处理网页请求，异步处理，使用Jsoup库
@@ -139,66 +143,68 @@ public class SearchController implements Initializable {
             this.keywords = keywords;
             this.department = department;
         }
+
         //  关于搜索中需要使用的变量存储
         //  process.set(process.get() + 0.2);
         @Override
         public List<Notice> call() throws Exception {
-            
+
             Map<String, String> depart_name = new HashMap<String, String>();  //部门号对应的超链接，大类
             for (String search_url : urls) {       //这里获取所有大标题，两大块搜索，部门和学院
-                Document doc = Jsoup.connect(search_url).timeout(10*1000).get();
+                Document doc = Jsoup.connect(search_url).timeout(10 * 1000).get();
                 Element by_class = doc.getElementsByClass("text_list_menu2").first();
                 Elements by_tag = by_class.getElementsByTag("a");
                 for (Element a_tag : by_tag) {  //各个school的名称和对应的超链接
-                    depart_name.put(a_tag.text(), a_tag.attr("href"));
+                    depart_name.put(a_tag.attr("href"), a_tag.text());
                 }
             }
             //根据部门号查找，超链接，添加到
             List<String> need_search = new LinkedList<String>();  //先筛选部门和学院
-            if(this.department.isEmpty()){
-                for(String key : depart_name.keySet()){
-                    need_search.add(depart_name.get(key));  //添加所有链接
+            if (this.department.isEmpty()) {
+                for (String key : depart_name.keySet()) {
+                    need_search.add(key);  //添加所有链接
                 }
             } else {
-                for(String key : depart_name.keySet()){
-                    if( key.contains(this.department) ){
-                        need_search.add(depart_name.get(key));
+                for (String key : depart_name.keySet()) {
+                    if (depart_name.get(key).contains(this.department)) {
+                        need_search.add(key);
                     }
                 }
             }
-            
-            System.out.println(need_search.toString());
+            //学院27个
+            //部门32个
             //现在need_search是所有需要搜索关键字的链接了
-            for(String url : need_search){   //点开大部门的链接
-                Document doc = Jsoup.connect(url).timeout(10*1000).get();
+            System.out.println(need_search.size() +"" + need_search.toString());
+            for (String url : need_search) {   //点开大部门的链接
+                Document doc = Jsoup.connect(url).timeout(10 * 1000).get();
                 //先判断总体情况
                 //Elements number_by_class = doc.getElementsByClass("num_nav");
                 //Elements by_class = doc.getElementsByClass("normal_list2");
                 //需要使用动态解析网页
-                
+
                 //先做后面的内容，这个问题解决不了
                 Element by_class = doc.getElementsByClass("normal_list2").first();
                 Elements get_li = by_class.getElementsByTag("li");
                 int size = get_li.size();  //总数
                 int index = 0;
-                for(Element li : get_li) {
+                for (Element li : get_li) {
                     index++;  //界面进度条显示进度
-                    process.set(index/size);
-                    
+                    process.set(index / size);
+
                     Element a = li.select("a").first();
                     Element strong = li.select("strong").first();
                     //提取信息进行筛选
                     String title = a.attr("title");  //名称
                     String link = a.attr("abs:href");  //超链接
-                    String content = Jsoup.connect(link).timeout(10*1000).get().getElementById("divToPrint").toString();  //连接内容，方便以后增加分析层
+                    String content = Jsoup.connect(link).timeout(10 * 1000).get().getElementById("divToPrint").toString();  //连接内容，方便以后增加分析层
                     LocalDate date = LocalDate.parse(strong.text());
                     Notice temp = null;
-                    if(date.isAfter(from) && date.isBefore(to)){
-                        if(keywords.isEmpty()){
-                            temp = new Notice(title, Jsoup.connect(link).timeout(10*1000).get().getElementById("divToPrint").toString(), date, link);
+                    if (date.isAfter(from) && date.isBefore(to)) {
+                        if (keywords.isEmpty()) {
+                            temp = new Notice(title, Jsoup.connect(link).timeout(10 * 1000).get().getElementById("divToPrint").toString(), date, link);
                             lists.add(temp);
-                        }else if (title.contains(keywords)) {
-                            temp = new Notice(title, Jsoup.connect(link).timeout(10*1000).get().getElementById("divToPrint").toString(), date, link);
+                        } else if (title.contains(keywords)) {
+                            temp = new Notice(title, Jsoup.connect(link).timeout(10 * 1000).get().getElementById("divToPrint").toString(), date, link);
                             lists.add(temp);
                         }
                     }
@@ -213,6 +219,7 @@ public class SearchController implements Initializable {
     public void addResultHBox() {
         //根据搜索结果添加到界面显示
         Platform.runLater(() -> {
+            Collections.sort(lists);
             System.out.println(lists.size());
             if (lists.isEmpty()) {
                 Alert empty = new Alert(Alert.AlertType.WARNING);

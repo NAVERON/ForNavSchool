@@ -11,7 +11,7 @@ import java.time.LocalDate;
  *
  * @author ERON
  */
-public class Notice {
+public class Notice implements Comparable<Notice>{
     
     public String title;
     public String content;
@@ -26,4 +26,19 @@ public class Notice {
         this.superlink = superlink;
         
     }
+
+    @Override
+    public int compareTo(Notice other) {
+        if(this.date.isBefore(other.date)){
+            return 1;
+        }else if(this.date.isAfter(other.date)){
+            return -1;
+        }
+        return 0;
+    }
 }
+
+
+
+
+
