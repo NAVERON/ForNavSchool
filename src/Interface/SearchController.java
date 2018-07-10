@@ -80,7 +80,7 @@ public class SearchController implements Initializable {
     //根据学院搜索，department输入学院名称
     //根据部门通知公告搜索，department输入部门名称
     //不输入department，搜索页面中的所有超链接            相关关键字       内容
-    ExecutorService executer = Executors.newSingleThreadExecutor();
+    ExecutorService executer = Executors.newCachedThreadPool();
     ProcessPage processpage;
     FutureTask<List<Notice>> futuretask;
 
@@ -94,32 +94,26 @@ public class SearchController implements Initializable {
         this.department = department_textfield.getText();
         //取消了验证，如果没有关键字则显示所有的链接
         processpage = new ProcessPage(this.from, this.to, this.keywords, this.department);  //链接内置
-        futuretask = new FutureTask<>(processpage);
+        futuretask = new FutureTask<List<Notice>>(processpage);
         search_progress.progressProperty().bind(processpage.process);  //绑定进度
-
-        Task updateUI = new Task<Void>() {
+        Task next = new Task() {
             @Override
-            public Void call() {
-                try {
-                    while (true) {
-                        if (futuretask.isDone()) {
-                            addResultHBox();
-                            break;
-                        } else {
-                            Thread.sleep(500);
-                        }
+            protected Object call() throws Exception {
+                while (true) {                    
+                    if(futuretask.isDone()){
+                        addResultHBox();
+                        break;
+                    }else if(futuretask.isCancelled()){
+                        break;
                     }
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, ex);
+                    Thread.sleep(200);
                 }
                 return null;
             }
         };
-        Thread next = new Thread(updateUI);
-        next.start();
-
         executer.submit(futuretask);
         executer.submit(next);
+        executer.shutdown();
     }
 
     public void cancle_search() {
@@ -136,19 +130,19 @@ public class SearchController implements Initializable {
 
         private LocalDate from, to;
         private String keywords, department;
-
+        
         public ProcessPage(LocalDate from, LocalDate to, String keywords, String department) {
             this.from = from;
             this.to = to;
             this.keywords = keywords;
             this.department = department;
         }
-
+        
         //  关于搜索中需要使用的变量存储
         //  process.set(process.get() + 0.2);
         @Override
         public List<Notice> call() throws Exception {
-
+            
             Map<String, String> depart_name = new HashMap<String, String>();  //部门号对应的超链接，大类
             for (String search_url : urls) {       //这里获取所有大标题，两大块搜索，部门和学院
                 Document doc = Jsoup.connect(search_url).timeout(10 * 1000).get();
@@ -158,39 +152,33 @@ public class SearchController implements Initializable {
                     depart_name.put(a_tag.attr("href"), a_tag.text());
                 }
             }
+            //这里的处理方式
             //根据部门号查找，超链接，添加到
-            List<String> need_search = new LinkedList<String>();  //先筛选部门和学院
+            Map<String, String> need_search = new HashMap<String, String>();  //先筛选部门和学院
             if (this.department.isEmpty()) {
-                for (String key : depart_name.keySet()) {
-                    need_search.add(key);  //添加所有链接
-                }
+                need_search.putAll(depart_name);
             } else {
                 for (String key : depart_name.keySet()) {
                     if (depart_name.get(key).contains(this.department)) {
-                        need_search.add(key);
+                        need_search.put(key, depart_name.get(key));
                     }
                 }
             }
             //学院27个
             //部门32个
             //现在need_search是所有需要搜索关键字的链接了
-            System.out.println(need_search.size() +"" + need_search.toString());
-            for (String url : need_search) {   //点开大部门的链接
-                Document doc = Jsoup.connect(url).timeout(10 * 1000).get();
-                //先判断总体情况
-                //Elements number_by_class = doc.getElementsByClass("num_nav");
-                //Elements by_class = doc.getElementsByClass("normal_list2");
-                //需要使用动态解析网页
-
+            System.out.println(need_search.size() +" : " + need_search.toString()+"\n");
+            for (String key : need_search.keySet()) {  //点开大部门的链接
+                String url = key;
+                System.out.println("现在搜索  ===  " + need_search.get(key)+"\n");
+                Document doc = Jsoup.connect(url).get();
+                
                 //先做后面的内容，这个问题解决不了
                 Element by_class = doc.getElementsByClass("normal_list2").first();
                 Elements get_li = by_class.getElementsByTag("li");
-                int size = get_li.size();  //总数
-                int index = 0;
+                
+                System.out.println(get_li.toString());
                 for (Element li : get_li) {
-                    index++;  //界面进度条显示进度
-                    process.set(index / size);
-
                     Element a = li.select("a").first();
                     Element strong = li.select("strong").first();
                     //提取信息进行筛选
