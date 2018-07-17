@@ -106,7 +106,7 @@ public class SearchController implements Initializable {
                     }else if(futuretask.isCancelled()){
                         break;
                     }
-                    Thread.sleep(200);
+                    Thread.sleep(1000);
                 }
                 return null;
             }
@@ -170,14 +170,12 @@ public class SearchController implements Initializable {
             System.out.println(need_search.size() +" : " + need_search.toString()+"\n");
             for (String key : need_search.keySet()) {  //点开大部门的链接
                 String url = key;
-                System.out.println("现在搜索  ===  " + need_search.get(key)+"\n");
                 Document doc = Jsoup.connect(url).get();
                 
                 //先做后面的内容，这个问题解决不了
                 Element by_class = doc.getElementsByClass("normal_list2").first();
                 Elements get_li = by_class.getElementsByTag("li");
-                
-                System.out.println(get_li.toString());
+                System.out.println(get_li.size());
                 for (Element li : get_li) {
                     Element a = li.select("a").first();
                     Element strong = li.select("strong").first();
