@@ -13,6 +13,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,6 +64,8 @@ public class SearchController implements Initializable {
     private VBox links_boxes;   //左边添加链接
     @FXML
     private WebView content_webview;  //右边显示的超链接网页界面
+    @FXML
+    private Label result_number_label;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -80,11 +84,13 @@ public class SearchController implements Initializable {
     //根据学院搜索，department输入学院名称
     //根据部门通知公告搜索，department输入部门名称
     //不输入department，搜索页面中的所有超链接            相关关键字       内容
-    ExecutorService executer = Executors.newCachedThreadPool();
-    ProcessPage processpage;
-    FutureTask<List<Notice>> futuretask;
+    ExecutorService executer = null;
+    ProcessPage processpage = null;
+    FutureTask<List<Notice>> futuretask = null;
+    Timer updateUI = null;
 
     public void search() {
+        
         lists.clear();
         links_boxes.getChildren().clear();
         //截面数据输入
@@ -96,24 +102,36 @@ public class SearchController implements Initializable {
         processpage = new ProcessPage(this.from, this.to, this.keywords, this.department);  //链接内置
         futuretask = new FutureTask<List<Notice>>(processpage);
         search_progress.progressProperty().bind(processpage.process);  //绑定进度
-        Task next = new Task() {
-            @Override
-            protected Object call() throws Exception {
-                while (true) {                    
-                    if(futuretask.isDone()){
-                        addResultHBox();
-                        break;
-                    }else if(futuretask.isCancelled()){
-                        break;
-                    }
-                    Thread.sleep(1000);
-                }
-                return null;
-            }
-        };
+        if(executer == null){
+            executer = Executors.newCachedThreadPool();
+        }
         executer.submit(futuretask);
-        executer.submit(next);
         executer.shutdown();
+        
+        if(updateUI == null){
+            updateUI = new Timer();
+        }
+        updateUI.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (futuretask.isDone()) {
+                    try {
+                        lists = futuretask.get();
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ExecutionException ex) {
+                        Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    addResultHBox();
+                    updateUI.cancel();
+                    updateUI = null;
+                } else if (futuretask.isCancelled()) {
+                    updateUI.cancel();
+                    updateUI = null;
+                }
+            }
+        }, 0, 2000);
+        
     }
 
     public void cancle_search() {
@@ -171,17 +189,16 @@ public class SearchController implements Initializable {
             for (String key : need_search.keySet()) {  //点开大部门的链接
                 String url = key;
                 Document doc = Jsoup.connect(url).get();
-                System.out.println(key); ////////////////////////////////////////////////////////////////////////////////////////
-                //先做后面的内容，这个问题解决不了
+                System.out.println(key);
                 Element by_class = doc.getElementsByClass("normal_list2").first();
                 Elements get_li = by_class.getElementsByTag("li");
                 for (Element li : get_li) {
-                    Element a = li.select("span > a[href]").first();
+                    Element a = li.select("span > a").first();
                     Element strong = li.select("strong").first();
                     //提取信息进行筛选
                     String title = a.attr("title");  //名称
                     String link = a.attr("abs:href");  //超链接
-                    String content = Jsoup.connect(link).timeout(10 * 1000).get().getElementById("divToPrint").toString();  //连接内容，方便以后增加分析层
+                    //String content = Jsoup.connect(link).timeout(10 * 1000).get().getElementById("divToPrint").toString();  //连接内容，方便以后增加分析层
                     LocalDate date = LocalDate.parse(strong.text());
                     Notice temp = null;
                     if (date.isAfter(from) && date.isBefore(to)) {
@@ -205,7 +222,7 @@ public class SearchController implements Initializable {
         //根据搜索结果添加到界面显示
         Platform.runLater(() -> {
             Collections.sort(lists);
-            System.out.println(lists.size());
+            result_number_label.setText("RESULT : " + lists.size());
             if (lists.isEmpty()) {
                 Alert empty = new Alert(Alert.AlertType.WARNING);
                 empty.setContentText("Nothing!!");
