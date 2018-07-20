@@ -123,6 +123,7 @@ public class SearchController implements Initializable {
                         Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     addResultHBox();
+                    
                     updateUI.cancel();
                     updateUI = null;
                 } else if (futuretask.isCancelled()) {
@@ -130,14 +131,22 @@ public class SearchController implements Initializable {
                     updateUI = null;
                 }
             }
-        }, 0, 2000);
+        }, 500, 500);
         
     }
 
     public void cancle_search() {
-        futuretask.cancel(true);
-        processpage.process.set(0);
-        executer.shutdownNow();
+        if  (!futuretask.isDone() ) {
+            futuretask.cancel(true);
+            futuretask = null;
+            processpage.process.set(0);
+            executer.shutdownNow();
+            executer = null;
+        }
+        if (updateUI != null) {
+            updateUI.cancel();
+            updateUI = null;
+        }
         addResultHBox();
     }
 
@@ -232,6 +241,8 @@ public class SearchController implements Initializable {
             for (Notice notice : lists) {
                 links_boxes.getChildren().add(new ResultHBox(content_webview, notice));
             }
+            
+            lists.clear();
         });
     }
 
