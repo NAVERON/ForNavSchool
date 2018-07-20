@@ -167,17 +167,16 @@ public class SearchController implements Initializable {
             //学院27个
             //部门32个
             //现在need_search是所有需要搜索关键字的链接了
-            System.out.println(need_search.size() +" : " + need_search.toString()+"\n");
+            System.out.println(need_search.size() +" : " + need_search.keySet()+"\n");
             for (String key : need_search.keySet()) {  //点开大部门的链接
                 String url = key;
                 Document doc = Jsoup.connect(url).get();
-                
+                System.out.println(key); ////////////////////////////////////////////////////////////////////////////////////////
                 //先做后面的内容，这个问题解决不了
                 Element by_class = doc.getElementsByClass("normal_list2").first();
                 Elements get_li = by_class.getElementsByTag("li");
-                System.out.println(get_li.size());
                 for (Element li : get_li) {
-                    Element a = li.select("a").first();
+                    Element a = li.select("span > a[href]").first();
                     Element strong = li.select("strong").first();
                     //提取信息进行筛选
                     String title = a.attr("title");  //名称
@@ -211,6 +210,7 @@ public class SearchController implements Initializable {
                 Alert empty = new Alert(Alert.AlertType.WARNING);
                 empty.setContentText("Nothing!!");
                 empty.showAndWait();
+                return;
             }
             for (Notice notice : lists) {
                 links_boxes.getChildren().add(new ResultHBox(content_webview, notice));
