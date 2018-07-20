@@ -84,7 +84,8 @@ public class SearchController implements Initializable {
     //根据学院搜索，department输入学院名称
     //根据部门通知公告搜索，department输入部门名称
     //不输入department，搜索页面中的所有超链接            相关关键字       内容
-    ExecutorService executer = null;
+
+    Thread executer = null;
     ProcessPage processpage = null;
     FutureTask<List<Notice>> futuretask = null;
     Timer updateUI = null;
@@ -93,7 +94,7 @@ public class SearchController implements Initializable {
         
         lists.clear();
         links_boxes.getChildren().clear();
-        //截面数据输入
+        //界面数据输入
         this.from = from_datepicker.getValue();
         this.to = to_datepicker.getValue();
         this.keywords = keywords_textfield.getText();
@@ -102,15 +103,11 @@ public class SearchController implements Initializable {
         processpage = new ProcessPage(this.from, this.to, this.keywords, this.department);  //链接内置
         futuretask = new FutureTask<List<Notice>>(processpage);
         search_progress.progressProperty().bind(processpage.process);  //绑定进度
-        if(executer == null){
-            executer = Executors.newCachedThreadPool();
-        }
-        executer.submit(futuretask);
-        executer.shutdown();
         
-        if(updateUI == null){
-            updateUI = new Timer();
-        }
+        executer = new Thread(futuretask);
+        executer.start();
+        
+        updateUI = new Timer();
         updateUI.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -131,23 +128,20 @@ public class SearchController implements Initializable {
                     updateUI = null;
                 }
             }
-        }, 500, 500);
+        }, 100, 200);
         
     }
 
     public void cancle_search() {
-        if  (!futuretask.isDone() ) {
+        if (executer != null) {
             futuretask.cancel(true);
-            futuretask = null;
             processpage.process.set(0);
-            executer.shutdownNow();
-            executer = null;
-        }
-        if (updateUI != null) {
+            executer.interrupt();
             updateUI.cancel();
             updateUI = null;
+            addResultHBox();
         }
-        addResultHBox();
+        executer = null;
     }
 
     class ProcessPage implements Callable<List<Notice>> {  //多线程处理网页请求，异步处理，使用Jsoup库
@@ -227,9 +221,10 @@ public class SearchController implements Initializable {
         }
     }
 
-    public void addResultHBox() {
+    public synchronized void addResultHBox() {
         //根据搜索结果添加到界面显示
         Platform.runLater(() -> {
+            
             Collections.sort(lists);
             result_number_label.setText("RESULT : " + lists.size());
             if (lists.isEmpty()) {
