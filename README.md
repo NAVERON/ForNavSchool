@@ -38,10 +38,15 @@
 - [ ] 进度条同步显示没有成功，需要改进
 ## 项目运行界面及截图
 ![](./main.png)
+fig 1 主界面
 ![](./search.png)
+fig 2 无关键字搜索
 ![](./result.png)
+fig 3 搜索结果
 ![](./special.png)
-##欢迎对本项目提出修改意见
+fig 4 有关键字搜索
+
+## 欢迎对本项目提出修改意见
 
 [我的知乎](https://www.zhihu.com/people/wang2046783134/activities)
 
